@@ -9,7 +9,10 @@ import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.ClientRegistrationException;
 import org.springframework.security.oauth2.provider.client.BaseClientDetails;
+import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
 import org.springframework.stereotype.Service;
+
+import javax.sql.DataSource;
 
 /**
  * @author ksn
@@ -18,10 +21,14 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @Slf4j
-public class AuthClientDetailsService implements ClientDetailsService {
+public class AuthClientDetailsService extends JdbcClientDetailsService {
 
     @Autowired
     AuthClientDetailsMapper authClientDetailsMapper;
+
+    public AuthClientDetailsService(DataSource dataSource) {
+        super(dataSource);
+    }
 
     @Override
     public ClientDetails loadClientByClientId(String clientId) throws ClientRegistrationException {

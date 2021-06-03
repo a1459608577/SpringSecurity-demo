@@ -2,6 +2,7 @@ package com.ksn.config;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import com.ksn.service.AuthClientDetailsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -60,15 +61,15 @@ public class AuthorizationServer extends AuthorizationServerConfigurerAdapter {
     TokenEnhancer tokenEnhancer;
     @Autowired
     TokenStore tokenStore;
-//    @Autowired
-//    ClientDetailsService clientDetailsService;
+    @Autowired
+    JdbcClientDetailsService clientDetailsService;
 
 
         // 从数据中查询客户端信息
-        @Bean("clientDetailsService1")
-        public ClientDetailsService clientDetailsService() {
-            return new JdbcClientDetailsService(dataSource);
-        }
+//        @Bean("clientDetailsService1")
+//        public ClientDetailsService clientDetailsService() {
+//            return new JdbcClientDetailsService(dataSource);
+//        }
 
     /**
      * 用来配置token的一些基本信息，
@@ -80,7 +81,7 @@ public class AuthorizationServer extends AuthorizationServerConfigurerAdapter {
         // 告诉spring security把自定义token生产方式加入到TokenEnhancerChain中
         tokenEnhancerChain.setTokenEnhancers(CollUtil.newArrayList(tokenEnhancer, jwtAccessTokenConverter));
         DefaultTokenServices services = new DefaultTokenServices();
-        services.setClientDetailsService(clientDetailsService());
+        services.setClientDetailsService(clientDetailsService);
         // 是否支持刷新
         services.setSupportRefreshToken(true);
         // 存储位置
@@ -172,7 +173,7 @@ public class AuthorizationServer extends AuthorizationServerConfigurerAdapter {
 //                .authorizedGrantTypes("authorization_code", "refresh_token", "implicit", "password", "client_credentials")
 //                .scopes("all")
 //                .redirectUris("http://www.baidu.com");
-            clients.withClientDetails(clientDetailsService());
+            clients.withClientDetails(clientDetailsService);
     }
 
     /**
