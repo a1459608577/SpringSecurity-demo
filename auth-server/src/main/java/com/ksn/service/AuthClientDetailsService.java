@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.ClientRegistrationException;
+import org.springframework.security.oauth2.provider.client.BaseClientDetails;
 import org.springframework.stereotype.Service;
 
 /**
@@ -27,12 +28,12 @@ public class AuthClientDetailsService implements ClientDetailsService {
         if (StrUtil.isEmpty(clientId)) {
             throw new RuntimeException("客户端id为空");
         }
-        AuthClientDetails authClientDetails = authClientDetailsMapper.loadClientDetailsByClientId(clientId);
+        AuthClientDetails details = authClientDetailsMapper.loadClientDetailsByClientId(clientId);
 
-        if (authClientDetails == null) {
+        if (details == null) {
             throw new RuntimeException("应用信息为空");
         }
 
-        return authClientDetails;
+        return details;
     }
 }

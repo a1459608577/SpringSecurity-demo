@@ -1,5 +1,6 @@
 package com.ksn.config;
 
+import com.ksn.handle.AgileOAuth2ExceptionRenderer;
 import com.ksn.service.AgileUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.provider.error.OAuth2ExceptionRenderer;
 
 /**
  * @author ksn
@@ -40,9 +42,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable().formLogin();
     }
 
-    @Bean
+    @Bean("authenticationManager")
     @Override
     protected AuthenticationManager authenticationManager() throws Exception {
         return super.authenticationManager();
+    }
+
+    @Bean
+    public OAuth2ExceptionRenderer oAuth2ExceptionRenderer(){
+        return new AgileOAuth2ExceptionRenderer();
     }
 }

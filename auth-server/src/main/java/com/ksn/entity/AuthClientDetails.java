@@ -1,7 +1,11 @@
 package com.ksn.entity;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.provider.ClientDetails;
 
 import java.util.*;
@@ -64,61 +68,69 @@ public class AuthClientDetails implements ClientDetails {
 
     @Override
     public Set<String> getResourceIds() {
-        return null;
+        return CollUtil.isNotEmpty(resourceIds) ? CollectionUtil.newHashSet(resourceIds) : CollectionUtil.newHashSet();
     }
 
     @Override
     public boolean isSecretRequired() {
-        return false;
+        return StrUtil.isNotBlank(privateKey);
     }
 
     @Override
     public String getClientSecret() {
-        return null;
+        return privateKey;
     }
 
     @Override
     public boolean isScoped() {
-        return false;
+        return CollUtil.isNotEmpty(scopes);
     }
 
     @Override
     public Set<String> getScope() {
-        return null;
+        return CollectionUtil.isNotEmpty(scopes) ? CollectionUtil.newHashSet(scopes) : CollectionUtil.newHashSet();
     }
 
     @Override
     public Set<String> getAuthorizedGrantTypes() {
-        return null;
+        return CollectionUtil.isNotEmpty(grantTypes) ? CollectionUtil.newHashSet(grantTypes) : CollectionUtil.newHashSet();
     }
 
     @Override
     public Set<String> getRegisteredRedirectUri() {
-        return null;
+        return CollectionUtil.isNotEmpty(redirectUris) ? CollectionUtil.newHashSet(redirectUris) : CollectionUtil.newHashSet();
     }
 
     @Override
     public Collection<GrantedAuthority> getAuthorities() {
-        return null;
+        ArrayList<GrantedAuthority> list = new ArrayList<>();
+        if (CollUtil.isNotEmpty(roles)) {
+            roles.stream().forEach(role -> list.add(new SimpleGrantedAuthority(role)));
+        }
+        return list;
     }
 
     @Override
     public Integer getAccessTokenValiditySeconds() {
-        return null;
+        return tokenValidSeconds == null ? 0 : tokenValidSeconds;
     }
 
     @Override
     public Integer getRefreshTokenValiditySeconds() {
-        return null;
+        return tokenRefreshSeconds == null ? 0 : tokenRefreshSeconds;
     }
 
+    // 验证scope
     @Override
     public boolean isAutoApprove(String scope) {
+        if (CollUtil.isNotEmpty(autoApproveScope)) {
+            return autoApproveScope.contains(scope);
+        }
         return false;
     }
 
     @Override
     public Map<String, Object> getAdditionalInformation() {
-        return null;
+        return Collections.unmodifiableMap(additionalInfo);
     }
 }
